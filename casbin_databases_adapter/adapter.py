@@ -30,8 +30,7 @@ class DatabasesAdapter(persist.Adapter):
         rows = await self.db.fetch_all(query)
         for row in rows:
             # convert row from tuple to csv format and removing the first column (id)
-            line = [v for k, v in row.item
-                    s() if k in self.cols and v is not None]
+            line = [v for k, v in row.items() if k in self.cols and v is not None]
             persist.load_policy_line(", ".join(line), model)
 
     async def save_policy(self, model: Model):
