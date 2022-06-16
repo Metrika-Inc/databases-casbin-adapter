@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "databases-casbin-adapter"
+version = "1.0.0"
+description = "This is an Adapter for PyCasbin that implemented using Databases connection to achieve async process"
+license = "MIT"
+authors = [
+    "Isa Setiawan Abdurrazaq <isasetiawan@protonmail.com>",
+    "Metrika Inc."
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+databases = "^0.6.0"
+casbin = { git = "https://github.com/Metrika-Inc/pycasbin.git", branch = "master" }
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+pytest-asyncio = "^0.18.3"
+aiosqlite = "^0.17.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

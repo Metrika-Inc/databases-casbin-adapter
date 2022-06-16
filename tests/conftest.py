@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 import sqlalchemy
 from casbin import Enforcer
@@ -8,6 +9,11 @@ from sqlalchemy import Table, Column, String, Integer
 from sqlalchemy.sql.ddl import CreateTable
 
 from casbin_databases_adapter import DatabasesAdapter
+
+
+@fixture(scope="session")
+def event_loop():
+    return asyncio.get_event_loop()
 
 
 @fixture(scope="session")
@@ -24,7 +30,7 @@ async def casbin_rule_table(db: Database):
     table = Table(
         "casbin_rules",
         metadata,
-        Column("id",Integer, primary_key=True),
+        Column("id", String(255), primary_key=True),
         Column("ptype", String(255)),
         Column("v0", String(255)),
         Column("v1", String(255)),
@@ -41,11 +47,11 @@ async def casbin_rule_table(db: Database):
 @fixture(scope="function")
 async def setup_policies(db: Database, casbin_rule_table: Table):
     rows = [
-        {"ptype": "p", "v0": "alice", "v1": "data1", "v2": "read"},
-        {"ptype": "p", "v0": "bob", "v1": "data2", "v2": "write"},
-        {"ptype": "p", "v0": "data2_admin", "v1": "data2", "v2": "read"},
-        {"ptype": "p", "v0": "data2_admin", "v1": "data2", "v2": "write"},
-        {"ptype": "g", "v0": "alice", "v1": "data2_admin"},
+        {"id": "abc", "ptype": "p", "v0": "alice", "v1": "data1", "v2": "read"},
+        {"id": "def", "ptype": "p", "v0": "bob", "v1": "data2", "v2": "write"},
+        {"id": "ghi", "ptype": "p", "v0": "data2_admin", "v1": "data2", "v2": "read"},
+        {"id": "jkl", "ptype": "p", "v0": "data2_admin", "v1": "data2", "v2": "write"},
+        {"id": "mno", "ptype": "g", "v0": "alice", "v1": "data2_admin"},
     ]
     await db.execute_many(casbin_rule_table.insert(), values=rows)
     yield await db.fetch_all(casbin_rule_table.select())

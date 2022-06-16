@@ -1,9 +1,11 @@
+import pytest
 from casbin import Enforcer, Model, Adapter
 from databases import Database
 
 from casbin_databases_adapter.adapter import Filter
 
 
+@pytest.mark.asyncio
 async def test_load_policy(db: Database, enforcer: Enforcer):
 
     assert enforcer.enforce("alice", "data1", "read") == True
@@ -16,6 +18,7 @@ async def test_load_policy(db: Database, enforcer: Enforcer):
     assert enforcer.enforce("bob", "data2", "read") == False
 
 
+@pytest.mark.asyncio
 async def test_add_policy(db: Database, enforcer: Enforcer):
     assert not enforcer.enforce("eve", "data3", "read")
     result = await enforcer.add_permission_for_user("eve", "data3", "read")
@@ -23,6 +26,7 @@ async def test_add_policy(db: Database, enforcer: Enforcer):
     assert enforcer.enforce("eve", "data3", "read")
 
 
+@pytest.mark.asyncio
 async def test_save_policy(db: Database, enforcer: Enforcer):
     assert not enforcer.enforce("alice", "data4", "read")
 
@@ -35,6 +39,7 @@ async def test_save_policy(db: Database, enforcer: Enforcer):
     assert enforcer.enforce("alice", "data4", "read")
 
 
+@pytest.mark.asyncio
 async def test_remove_policy(db: Database, enforcer: Enforcer):
     assert not (enforcer.enforce("alice", "data5", "read"))
     await enforcer.add_permission_for_user("alice", "data5", "read")
@@ -43,6 +48,7 @@ async def test_remove_policy(db: Database, enforcer: Enforcer):
     assert not (enforcer.enforce("alice", "data5", "read"))
 
 
+@pytest.mark.asyncio
 async def test_remove_filtered_policy(db: Database, enforcer: Enforcer):
 
     assert enforcer.enforce("alice", "data1", "read")
@@ -65,6 +71,7 @@ async def test_remove_filtered_policy(db: Database, enforcer: Enforcer):
     assert not (enforcer.enforce("alice", "data2", "write"))
 
 
+@pytest.mark.asyncio
 async def test_filtered_policy(db: Database, enforcer: Enforcer):
     filter = Filter()
 
