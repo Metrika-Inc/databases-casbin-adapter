@@ -7,6 +7,10 @@ authors = [
     "Isa Setiawan Abdurrazaq <isasetiawan@protonmail.com>",
     "Metrika Inc."
 ]
+packages = [
+     { include = "casbin_databases_adapter" },
+     { include = "casbin_databases_adapter/**/*.py" },
+ ]
 
 [tool.poetry.dependencies]
 python = "^3.9"
