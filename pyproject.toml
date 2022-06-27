@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "databases-casbin-adapter"
+name = "casbin_databases_adapter"
 version = "1.0.0"
 description = "This is an Adapter for PyCasbin that implemented using Databases connection to achieve async process"
 license = "MIT"
@@ -8,7 +8,7 @@ authors = [
     "Metrika Inc."
 ]
 packages = [
-    { include = "databases-casbin-adapter", from="." },
+    { include = "casbin_databases_adapter", from="." },
 ]
 
 [tool.poetry.dependencies]
