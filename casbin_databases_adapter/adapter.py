@@ -4,6 +4,7 @@ from typing import Dict, List
 from casbin import Model, persist
 from databases import Database
 from sqlalchemy import Table
+from sqlalchemy.dialects.postgresql import insert
 
 
 class Filter:
@@ -29,13 +30,14 @@ class DatabasesAdapter(persist.Adapter):
         query = self.table.select()
         rows = await self.db.fetch_all(query)
         for row in rows:
+
             # convert row from tuple to csv format and removing the first column (id)
-            line = [v for k, v in row.items() if k in self.cols and v is not None]
+            line = [v for k, v in dict(row).items() if k in self.cols and v is not None]
             persist.load_policy_line(", ".join(line), model)
 
     async def save_policy(self, model: Model):
         await self.db.execute(self.table.delete())
-        query = self.table.insert()
+        query = insert(self.table).on_conflict_do_nothing(index_elements=["id"])
 
         values: List = []
         for sec in ["p", "g"]:
@@ -53,7 +55,7 @@ class DatabasesAdapter(persist.Adapter):
 
     async def add_policy(self, sec, p_type, rule):
         row = self._policy_to_dict(p_type, rule)
-        await self.db.execute(self.table.insert(), row)
+        await self.db.execute(insert(self.table).on_conflict_do_nothing(index_elements=["id"]), row)
 
     async def remove_policy(self, sec, p_type, rule):
         query = self.table.delete().where(self.table.columns.ptype == p_type)
@@ -84,7 +86,7 @@ class DatabasesAdapter(persist.Adapter):
         rows = await self.db.fetch_all(query)
         for row in rows:
             # convert row from tuple to csv format and removing the first column (id)
-            line = [v for k, v in row.items() if k in self.cols and v is not None]
+            line = [v for k, v in dict(row).items() if k in self.cols and v is not None]
             persist.load_policy_line(", ".join(line), model)
 
     def is_filtered(self):
