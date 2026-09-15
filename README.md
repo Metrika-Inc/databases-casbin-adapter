@@ -7,3 +7,4 @@ This is an Adapter for [PyCasbin](https://github.com/casbin/pycasbin) that imple
 * `make install` to install all required depedencies writtern in `requirements.txt` and `requirements-test.txt`
 * `make check` to run mypy
 * `make test` to run unit test that written using pytest
+
