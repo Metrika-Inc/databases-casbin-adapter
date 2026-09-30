@@ -4,7 +4,7 @@ import sqlalchemy
 from casbin import Enforcer
 from databases import Database
 from pytest import fixture
-from sqlalchemy import Table, Column, String, Integer
+from sqlalchemy import Table, Column, String
 from sqlalchemy.sql.ddl import CreateTable
 
 from casbin_databases_adapter import DatabasesAdapter
@@ -24,7 +24,7 @@ async def casbin_rule_table(db: Database):
     table = Table(
         "casbin_rules",
         metadata,
-        Column("id",Integer, primary_key=True),
+        Column("id", String(64), primary_key=True),
         Column("ptype", String(255)),
         Column("v0", String(255)),
         Column("v1", String(255)),
@@ -41,11 +41,11 @@ async def casbin_rule_table(db: Database):
 @fixture(scope="function")
 async def setup_policies(db: Database, casbin_rule_table: Table):
     rows = [
-        {"ptype": "p", "v0": "alice", "v1": "data1", "v2": "read"},
-        {"ptype": "p", "v0": "bob", "v1": "data2", "v2": "write"},
-        {"ptype": "p", "v0": "data2_admin", "v1": "data2", "v2": "read"},
-        {"ptype": "p", "v0": "data2_admin", "v1": "data2", "v2": "write"},
-        {"ptype": "g", "v0": "alice", "v1": "data2_admin"},
+        DatabasesAdapter._policy_to_dict("p", ["alice", "data1", "read"]),
+        DatabasesAdapter._policy_to_dict("p", ["bob", "data2", "write"]),
+        DatabasesAdapter._policy_to_dict("p", ["data2_admin", "data2", "read"]),
+        DatabasesAdapter._policy_to_dict("p", ["data2_admin", "data2", "write"]),
+        DatabasesAdapter._policy_to_dict("g", ["alice", "data2_admin"]),
     ]
     await db.execute_many(casbin_rule_table.insert(), values=rows)
     yield await db.fetch_all(casbin_rule_table.select())
