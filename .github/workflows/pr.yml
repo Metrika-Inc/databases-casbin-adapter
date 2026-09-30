@@ -1,0 +1,43 @@
+name: Pull Request
+
+# This repo had no workflows at all, so its merged PRs ran nothing.
+# Addresses the Vanta control `github-code-change-automated-checks-enabled`.
+#
+# Runs the repo's own `make check` (mypy) and the pytest suite, which needs
+# no services: the tests use an in-memory sqlite database.
+#
+# GitHub-hosted runner, not production-main: this is a public fork, and
+# self-hosted runners must never execute code from public-repo PRs.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [master]
+
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v5
+        with:
+          # setup.py classifiers stop at 3.9, and pytest 5.3.5 does not run
+          # on 3.10+.
+          python-version: '3.9'
+
+      - name: Install
+        run: make install
+
+      - name: mypy
+        run: make check
+
+      - name: pytest
+        run: python -m pytest -v

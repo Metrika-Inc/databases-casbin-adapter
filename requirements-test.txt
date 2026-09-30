@@ -3,3 +3,7 @@ pytest-cov==2.8.1
 alt-pytest-asyncio==0.5.2
 aiosqlite==0.17.0
 mypy==0.812
+# Test-environment pins only; install_requires stays open. The suite hangs on
+# SQLAlchemy 2 + databases 0.9, which postdate this adapter.
+SQLAlchemy<1.4
+databases<0.5
